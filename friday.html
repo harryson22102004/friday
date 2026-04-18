@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>FRIDAY | AI Orchestrator</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-fixed-dim": "#00e290",
+                        "on-error-container": "#ffdad6",
+                        "inverse-on-surface": "#2e3134",
+                        "secondary-fixed": "#e8deff",
+                        "secondary-container": "#5203d5",
+                        "primary-container": "#00e5ff",
+                        "error": "#ffb4ab",
+                        "primary-fixed-dim": "#00daf3",
+                        "error-container": "#93000a",
+                        "tertiary-fixed": "#52ffac",
+                        "on-secondary-fixed-variant": "#4f00d0",
+                        "on-secondary-container": "#c0acff",
+                        "surface-tint": "#00daf3",
+                        "on-tertiary-container": "#00673f",
+                        "surface-container-low": "#191c1f",
+                        "surface-container": "#1d2023",
+                        "on-primary": "#00363d",
+                        "tertiary-container": "#00ee98",
+                        "on-secondary-fixed": "#20005f",
+                        "primary-fixed": "#9cf0ff",
+                        "outline-variant": "#3b494c",
+                        "on-secondary": "#370096",
+                        "surface-container-high": "#282a2e",
+                        "on-tertiary-fixed": "#002111",
+                        "on-surface-variant": "#bac9cc",
+                        "secondary": "#cdbdff",
+                        "on-primary-fixed": "#001f24",
+                        "surface-container-lowest": "#0c0e12",
+                        "on-tertiary": "#003920",
+                        "outline": "#849396",
+                        "inverse-primary": "#006875",
+                        "surface-bright": "#37393d",
+                        "background": "#111417",
+                        "surface-container-highest": "#323539",
+                        "on-surface": "#e1e2e7",
+                        "surface-variant": "#323539",
+                        "on-primary-fixed-variant": "#004f58",
+                        "tertiary": "#abffcb",
+                        "on-tertiary-fixed-variant": "#005231",
+                        "on-primary-container": "#00626e",
+                        "on-error": "#690005",
+                        "on-background": "#e1e2e7",
+                        "surface-dim": "#111417",
+                        "secondary-fixed-dim": "#cdbdff",
+                        "inverse-surface": "#e1e2e7",
+                        "surface": "#111417",
+                        "primary": "#c3f5ff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "fontFamily": {
+                        "headline": ["Space Grotesk"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-panel {
+            backdrop-filter: blur(24px);
+            background: rgba(17, 20, 23, 0.6);
+        }
+        .glow-cyan {
+            text-shadow: 0 0 12px rgba(0, 229, 255, 0.4);
+        }
+        .orb-glow {
+            box-shadow: 0 0 40px rgba(0, 229, 255, 0.4), inset 0 0 20px rgba(255, 255, 255, 0.2);
+        }
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #3b494c;
+            border-radius: 10px;
+        }
+
+        /* JARVIS ANIMATION HUD */
+        @keyframes spinSlow { 100% { transform: rotate(360deg); } }
+        @keyframes spinMed { 100% { transform: rotate(-360deg); } }
+        @keyframes spinFast { 100% { transform: rotate(360deg); } }
+
+        .jarvis-core {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 500px;
+            height: 500px;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.05;
+            transition: all 0.5s ease;
+        }
+        body.listening .jarvis-core {
+            opacity: 0.2;
+            filter: drop-shadow(0 0 20px rgba(0, 229, 255, 0.6)) drop-shadow(0 0 40px rgba(168,85,247,0.4));
+        }
+        body.listening .jarvis-core .core-1 {
+            border-color: #a855f7;
+        }
+        .jarvis-core div {
+            position: absolute;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            top: 50%; left: 50%;
+            transform-origin: center;
+        }
+        .core-1 {
+            width: 100%; height: 100%;
+            border-top: 2px solid #00E5FF;
+            border-bottom: 2px solid #00E5FF;
+            margin-left: -50%; margin-top: -50%;
+            animation: spinSlow 3s linear infinite;
+            transition: border-color 0.5s ease;
+        }
+        .core-2 {
+            width: 85%; height: 85%;
+            border-left: 2px solid #00E5FF;
+            border-right: 2px solid #00E5FF;
+            margin-left: -42.5%; margin-top: -42.5%;
+            animation: spinMed 2s linear infinite;
+        }
+        .core-3 {
+            width: 70%; height: 70%;
+            border: 2px dashed #00E5FF;
+            margin-left: -35%; margin-top: -35%;
+            animation: spinFast 1s linear infinite;
+            opacity: 0.5;
+        }
+        .core-4 {
+            width: 50%; height: 50%;
+            border-top: 4px solid #00E5FF;
+            border-bottom: 4px dotted #00E5FF;
+            margin-left: -25%; margin-top: -25%;
+            animation: spinSlow 2.5s linear infinite;
+        }
+        .core-5 {
+            width: 30%; height: 30%;
+            background: radial-gradient(circle, rgba(0,229,255,0.15) 0%, transparent 60%);
+            border: 1px solid rgba(0,229,255,0.4);
+            margin-left: -15%; margin-top: -15%;
+            box-shadow: 0 0 30px rgba(0, 229, 255, 0.3);
+        }
+    </style>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+</head>
+<body class="bg-background text-on-background font-body selection:bg-primary-container selection:text-on-primary-container overflow-hidden">
+<!-- TopNavBar -->
+<header class="flex justify-between items-center px-8 h-16 w-full fixed top-0 z-50 bg-[#111417]/70 backdrop-blur-xl">
+<div class="flex items-center gap-4">
+<span class="text-2xl font-bold tracking-tighter text-[#c3f5ff] drop-shadow-[0_0_8px_rgba(0,229,255,0.5)] font-headline uppercase">FRIDAY</span>
+<div class="h-4 w-[1px] bg-outline-variant mx-2"></div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-xs" style="font-variation-settings: 'FILL' 1;">sensors</span>
+<span class="font-headline tracking-widest uppercase text-xs text-primary" id="status-badge">STANDBY</span>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="hidden md:flex gap-8 items-center text-slate-500 font-headline tracking-widest uppercase text-sm">
+<span class="text-[#00E5FF] cursor-pointer hover:text-[#c3f5ff] transition-colors duration-300">Overview</span>
+<span class="cursor-pointer hover:text-[#c3f5ff] transition-colors duration-300">Network</span>
+<span class="cursor-pointer hover:text-[#c3f5ff] transition-colors duration-300">Logs</span>
+</div>
+<button class="material-symbols-outlined text-slate-400 hover:text-primary transition-all">settings</button>
+<div class="w-8 h-8 rounded-full border border-primary/20 p-0.5">
+<img alt="AI System Status" class="w-full h-full rounded-full object-cover" data-alt="Abstract glowing blue neural network sphere representing an advanced artificial intelligence core status interface" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDnMgjcJoz7CjlFzURaoMfz545QOLc4rIvMmnpZ85ewDAdRdp5BN9OR8jZmk64jeuVCaBTE2604DdNZSegZrt6_rotqm9jM6911YJq0LT8B49ICpd_HQfO5T_NyX9l2JZqrBJk9jeYCOqRMIFJe8IDSFUvoMm2aSOQibWxSSI6vhwZkTxOqLeSu95ybY-sPjwJe7KCE-CBxqGMbbkExDNCrou6L34J0-ghP8UA0NURR3Jxhl3opXImsp_ZJDiJYxyu7g2Z9IAsLTOA"/>
+</div>
+</div>
+<div class="bg-gradient-to-b from-[#c3f5ff]/5 to-transparent h-[1px] w-full absolute bottom-0 left-0"></div>
+</header>
+<!-- SideNavBar -->
+<nav class="h-screen w-64 left-0 top-0 fixed flex flex-col pt-20 pb-8 px-4 gap-2 bg-[#111417]/40 backdrop-blur-2xl z-40">
+<div class="px-4 mb-6">
+<h2 class="text-primary font-headline font-bold text-xs tracking-widest uppercase mb-1">System</h2>
+<p class="text-slate-500 text-[10px] font-headline tracking-wider uppercase">Active Alpha-01</p>
+</div>
+<div class="flex flex-col gap-1">
+<a class="flex items-center gap-3 px-4 py-3 bg-[#00E5FF]/10 text-[#00E5FF] border-l-2 border-[#00E5FF] shadow-[0_0_15px_rgba(0,229,255,0.2)] rounded-r-lg transition-all group" href="#">
+<span class="material-symbols-outlined text-xl" style="font-variation-settings: 'FILL' 1;">psychology</span>
+<span class="font-headline font-light text-xs tracking-wider">AI Orchestrator</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-400 hover:bg-white/5 hover:text-[#c3f5ff] transition-all rounded-lg group" href="#" onclick="socket.emit('capture_vision'); return false;">
+<span class="material-symbols-outlined text-xl">visibility</span>
+<span class="font-headline font-light text-xs tracking-wider">Vision Engine</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-400 hover:bg-white/5 hover:text-[#c3f5ff] transition-all rounded-lg group" href="#">
+<span class="material-symbols-outlined text-xl">deployed_code</span>
+<span class="font-headline font-light text-xs tracking-wider">3D CAD</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-400 hover:bg-white/5 hover:text-[#c3f5ff] transition-all rounded-lg group" href="#">
+<span class="material-symbols-outlined text-xl">language</span>
+<span class="font-headline font-light text-xs tracking-wider">Web Browser</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-400 hover:bg-white/5 hover:text-[#c3f5ff] transition-all rounded-lg group" href="#">
+<span class="material-symbols-outlined text-xl">phone_in_talk</span>
+<span class="font-headline font-light text-xs tracking-wider">Twilio Phone</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-400 hover:bg-white/5 hover:text-[#c3f5ff] transition-all rounded-lg group" href="#">
+<span class="material-symbols-outlined text-xl">terminal</span>
+<span class="font-headline font-light text-xs tracking-wider">Computer Control</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-400 hover:bg-white/5 hover:text-[#c3f5ff] transition-all rounded-lg group" href="#">
+<span class="material-symbols-outlined text-xl">memory</span>
+<span class="font-headline font-light text-xs tracking-wider">Memory</span>
+</a>
+</div>
+<div class="mt-auto px-4">
+<div class="p-4 rounded-xl bg-surface-container-low border border-outline-variant/10">
+<div class="flex justify-between items-center mb-2">
+<span class="text-[10px] text-slate-500 uppercase tracking-widest font-headline">CPU Load</span>
+<span class="text-[10px] text-primary">14%</span>
+</div>
+<div class="h-1 w-full bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[14%] shadow-[0_0_8px_rgba(0,229,255,0.8)]"></div>
+</div>
+</div>
+</div>
+<div class="bg-gradient-to-r from-transparent to-[#c3f5ff]/5 w-[1px] h-full absolute right-0 top-0"></div>
+</nav>
+<!-- Main Content -->
+<main class="ml-64 mr-80 pt-16 h-screen flex flex-col relative">
+<!-- Jarvis Background Animation -->
+<div class="jarvis-core" id="jarvis-core">
+  <div class="core-1"></div>
+  <div class="core-2"></div>
+  <div class="core-3"></div>
+  <div class="core-4"></div>
+  <div class="core-5"></div>
+</div>
+<!-- Chat Interface -->
+<div id="chat" class="flex-1 overflow-y-auto px-8 py-10 space-y-8 flex flex-col scroll-smooth relative z-10">
+</div>
+<!-- Input Area -->
+<div class="p-8 pt-0">
+<div class="relative max-w-4xl mx-auto group">
+<div class="absolute -inset-1 bg-gradient-to-r from-primary/20 to-secondary/20 rounded-full blur opacity-25 group-focus-within:opacity-75 transition duration-1000 group-focus-within:duration-200"></div>
+<div class="relative flex items-center bg-surface-container-low/80 backdrop-blur-xl rounded-full border border-outline-variant/20 px-6 py-2">
+<input class="w-full bg-transparent border-none focus:ring-0 text-sm text-on-surface placeholder:text-slate-600 font-body" placeholder="Issue a system directive..." type="text" id="text-input" onkeydown="handleKey(event)" />
+<button id="send-btn" onclick="sendText()" class="ml-4 flex items-center justify-center w-10 h-10 rounded-full bg-primary-container text-on-primary-container hover:scale-105 active:scale-95 transition-all">
+<span class="material-symbols-outlined">send</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Bottom Controls (Orb & Visualizer) -->
+<div class="h-32 flex items-center justify-center gap-12 relative overflow-hidden">
+<!-- Visualizer Left -->
+<div class="flex items-end gap-1.5 h-12">
+<div class="w-1 bg-primary/40 rounded-full h-4 animate-[pulse_1s_infinite]"></div>
+<div class="w-1 bg-primary/60 rounded-full h-8 animate-[pulse_1.2s_infinite]"></div>
+<div class="w-1 bg-primary rounded-full h-12 animate-[pulse_0.8s_infinite]"></div>
+<div class="w-1 bg-primary/60 rounded-full h-6 animate-[pulse_1.5s_infinite]"></div>
+<div class="w-1 bg-primary/40 rounded-full h-10 animate-[pulse_1.1s_infinite]"></div>
+</div>
+<!-- Central Orb -->
+<div class="relative">
+<div class="absolute inset-0 bg-primary/30 rounded-full blur-2xl animate-pulse"></div>
+<button id="orb" onclick="toggleListening()" class="relative w-16 h-16 rounded-full bg-gradient-to-br from-primary to-primary-container orb-glow flex items-center justify-center group active:scale-90 transition-transform">
+<span class="material-symbols-outlined text-on-primary text-3xl group-hover:scale-110 transition-transform" style="font-variation-settings: 'FILL' 1;">mic</span>
+</button>
+</div>
+<!-- Visualizer Right -->
+<div class="flex items-end gap-1.5 h-12">
+<div class="w-1 bg-primary/40 rounded-full h-10 animate-[pulse_1.3s_infinite]"></div>
+<div class="w-1 bg-primary/60 rounded-full h-6 animate-[pulse_0.9s_infinite]"></div>
+<div class="w-1 bg-primary rounded-full h-12 animate-[pulse_1.4s_infinite]"></div>
+<div class="w-1 bg-primary/60 rounded-full h-8 animate-[pulse_1s_infinite]"></div>
+<div class="w-1 bg-primary/40 rounded-full h-4 animate-[pulse_1.2s_infinite]"></div>
+</div>
+</div>
+</main>
+<!-- Right Sidebar (Diagnostics) -->
+<aside class="fixed right-0 top-0 h-screen w-80 pt-20 px-6 bg-[#111417]/40 backdrop-blur-2xl z-40 border-l border-outline-variant/10">
+<div class="mb-10">
+<h3 class="font-headline font-bold text-sm tracking-widest text-primary uppercase mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-lg">analytics</span>
+                System Diagnostics
+            </h3>
+<div class="space-y-6">
+<!-- Latency -->
+<div>
+<div class="flex justify-between items-center mb-2">
+<span class="text-[11px] font-headline tracking-wider text-slate-400 uppercase">Latency</span>
+<span id="stat-latency" class="text-[11px] font-headline text-primary">-- ms</span>
+</div>
+<div class="h-1 w-full bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[24%]"></div>
+</div>
+</div>
+<!-- Model -->
+<div>
+<div class="flex justify-between items-center mb-2">
+<span class="text-[11px] font-headline tracking-wider text-slate-400 uppercase">Model Cluster</span>
+<span class="text-[11px] font-headline text-secondary">Gemini 2.5</span>
+</div>
+<div class="h-1 w-full bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-secondary w-[85%]"></div>
+</div>
+</div>
+<!-- Voice -->
+<div>
+<div class="flex justify-between items-center mb-2">
+<span class="text-[11px] font-headline tracking-wider text-slate-400 uppercase">Voice Synth</span>
+<span class="text-[11px] font-headline text-tertiary">Charon</span>
+</div>
+<div class="h-1 w-full bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-tertiary w-[60%]"></div>
+</div>
+</div>
+<!-- Comms -->
+<div>
+<div class="flex justify-between items-center mb-2">
+<span class="text-[11px] font-headline tracking-wider text-slate-400 uppercase">Comms Link</span>
+<span class="text-[11px] font-headline text-primary-container">Encrypted</span>
+</div>
+<div class="h-1 w-full bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-primary-container w-[100%]"></div>
+</div>
+</div>
+</div>
+</div>
+<div>
+<h3 class="font-headline font-bold text-[10px] tracking-widest text-slate-500 uppercase mb-4">Online Tools</h3>
+<div class="space-y-3">
+<div class="flex items-center justify-between p-3 rounded-xl bg-surface-container-low border border-outline-variant/5 hover:bg-surface-container-high transition-colors cursor-pointer group">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary text-lg">database</span>
+<span class="text-xs font-headline tracking-wide">Vector DB</span>
+</div>
+<span class="w-2 h-2 rounded-full bg-tertiary-fixed shadow-[0_0_8px_#00e290]"></span>
+</div>
+<div class="flex items-center justify-between p-3 rounded-xl bg-surface-container-low border border-outline-variant/5 hover:bg-surface-container-high transition-colors cursor-pointer group">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary text-lg">satellite_alt</span>
+<span class="text-xs font-headline tracking-wide">Satellite Link</span>
+</div>
+<span class="w-2 h-2 rounded-full bg-tertiary-fixed shadow-[0_0_8px_#00e290]"></span>
+</div>
+<div class="flex items-center justify-between p-3 rounded-xl bg-surface-container-low border border-outline-variant/5 hover:bg-surface-container-high transition-colors cursor-pointer group">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary-container text-lg">search_insights</span>
+<span class="text-xs font-headline tracking-wide">Real-time Search</span>
+</div>
+<span class="w-2 h-2 rounded-full bg-tertiary-fixed shadow-[0_0_8px_#00e290]"></span>
+</div>
+</div>
+</div>
+</aside>
+
+<script>
+  const socket = io('http://localhost:5000', { transports: ['websocket', 'polling'] });
+  let isListening = false;
+  let pingStart = Date.now();
+
+  socket.on('connect', () => {
+    setStatus('CONNECTED', true);
+    const latency = Date.now() - pingStart;
+    document.getElementById('stat-latency').textContent = latency + ' ms';
+    addMsg('FRIDAY', 'System online. All cores nominal. Awaiting your command, Sir.', 'friday');
+  });
+
+  socket.on('disconnect', () => setStatus('OFFLINE', false));
+
+  socket.on('status', d => {
+    setStatus(d.msg, true);
+    addMsg('SYSTEM', d.msg, 'friday');
+  });
+
+  socket.on('transcription', d => {
+    const cls = d.sender === 'User' ? 'user' : 'friday';
+    addMsg(d.sender, d.text, cls);
+  });
+
+  socket.on('error', d => {
+    addMsg('ERROR', d.msg, 'friday');
+  });
+
+  function setStatus(text, online) {
+    const badge = document.getElementById('status-badge');
+    badge.textContent = text;
+    if (online) {
+      badge.classList.remove('text-slate-500');
+      badge.classList.add('text-primary');
+    } else {
+      badge.classList.add('text-slate-500');
+      badge.classList.remove('text-primary');
+    }
+  }
+
+  function addMsg(sender, text, cls) {
+    if (typeof addMemoryNode === 'function') addMemoryNode(text, sender.toUpperCase());
+    const chat = document.getElementById('chat');
+    const wrap = document.createElement('div');
+    
+    if (cls === 'user') {
+      wrap.className = 'flex flex-col items-end max-w-2xl ml-auto animate-[fadeIn_0.3s_ease]';
+      wrap.innerHTML = `
+        <div class="flex items-center gap-2 mb-2 mr-1">
+          <span class="text-[10px] font-headline tracking-tighter text-slate-400 uppercase font-bold">${sender}</span>
+        </div>
+        <div class="bg-surface-container-high/40 p-5 rounded-2xl rounded-tr-none border border-outline-variant/10 backdrop-blur-md">
+          <p class="text-sm leading-relaxed text-on-surface/80">${escapeHtml(text)}</p>
+        </div>
+      `;
+    } else {
+      wrap.className = 'flex flex-col items-start max-w-2xl animate-[fadeIn_0.3s_ease]';
+      wrap.innerHTML = `
+        <div class="flex items-center gap-2 mb-2 ml-1">
+          <span class="text-[10px] font-headline tracking-tighter text-primary uppercase font-bold">${sender}</span>
+        </div>
+        <div class="glass-panel p-5 rounded-2xl rounded-tl-none border border-primary/10 glow-cyan">
+          <p class="text-sm leading-relaxed text-on-surface/90">${escapeHtml(text)}</p>
+        </div>
+      `;
+    }
+    chat.appendChild(wrap);
+    chat.scrollTop = chat.scrollHeight;
+  }
+
+  function escapeHtml(s) {
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  function toggleListening() {
+    const orb = document.getElementById('orb');
+    if (!isListening) {
+      socket.emit('start_audio');
+      isListening = true;
+      orb.classList.remove('from-primary', 'to-primary-container', 'orb-glow');
+      orb.classList.add('from-secondary', 'to-secondary-container', 'shadow-[0_0_40px_rgba(168,85,247,0.6)]');
+      orb.innerHTML = `<span class="material-symbols-outlined text-on-primary text-3xl">stop_circle</span>`;
+      setStatus('LISTENING', true);
+      document.body.classList.add('listening');
+    } else {
+      socket.emit('stop_audio');
+      isListening = false;
+      orb.classList.remove('from-secondary', 'to-secondary-container', 'shadow-[0_0_40px_rgba(168,85,247,0.6)]');
+      orb.classList.add('from-primary', 'to-primary-container', 'orb-glow');
+      orb.innerHTML = `<span class="material-symbols-outlined text-on-primary text-3xl group-hover:scale-110 transition-transform" style="font-variation-settings: 'FILL' 1;">mic</span>`;
+      setStatus('STANDBY', true);
+      document.body.classList.remove('listening');
+    }
+  }
+
+  function sendText() {
+    const inp = document.getElementById('text-input');
+    const text = inp.value.trim();
+    if (!text) return;
+    socket.emit('user_input', { text });
+    addMsg('Sir', text, 'user');
+    inp.value = '';
+  }
+
+  function handleKey(e) {
+    if (e.key === 'Enter') sendText();
+  }
+
+  setInterval(() => {
+    pingStart = Date.now();
+    socket.emit('ping');
+  }, 5000);
+</script>
+<style>
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: none; }
+  }
+</style>
+
+<script>
+// --- Neural Brain UI ---
+const memoryNodes = [];
+const CORES = [
+  {id: 'motor', x: -300, y: -200, label: 'MOTOR CORTEX', sub: '380 neurons - firing 4.3K', color: '#ff3333'},
+  {id: 'hippocampus', x: 250, y: 150, label: 'HIPPOCAMPUS', sub: 'Active Storage', color: '#00ee98'},
+  {id: 'sensory', x: -350, y: 100, label: 'SENSORY CORTEX', sub: '400 neurons - firing 4.4K', color: '#00E5FF'},
+  {id: 'concept', x: 300, y: -50, label: 'CONCEPT LAYER', sub: '200 neurons - firing 2.4K', color: '#ffaa00'},
+  {id: 'language', x: -100, y: 250, label: 'LANGUAGE NET', sub: 'Processing...', color: '#a855f7'}
+];
+
+function initBrain() {
+    const canvas = document.createElement('canvas');
+    canvas.id = 'brainCanvas';
+    canvas.className = 'fixed top-0 left-0 w-full h-full pointer-events-none z-0 mix-blend-screen';
+    document.body.insertBefore(canvas, document.body.firstChild);
+    
+    let ctx = canvas.getContext('2d');
+    let time = 0;
+    
+    // Add aesthetic background nodes
+    for(let i=0; i<40; i++) {
+        let ci = i % CORES.length;
+        let c = CORES[ci];
+        let angle = Math.random() * Math.PI * 2;
+        let dist = 100 + Math.random() * 300;
+        memoryNodes.push({
+            x: window.innerWidth/2 + c.x + Math.cos(angle)*dist,
+            y: window.innerHeight/2 + c.y + Math.sin(angle)*dist,
+            targetX: window.innerWidth/2 + c.x + Math.cos(angle)*dist,
+            targetY: window.innerHeight/2 + c.y + Math.sin(angle)*dist,
+            text: `SYS.MEM.${Math.floor(Math.random()*9999)}`,
+            alpha: 0.2,
+            coreIndex: ci,
+            isBg: true
+        });
+    }
+    
+    function draw() {
+        if(canvas.width !== window.innerWidth) canvas.width = window.innerWidth;
+        if(canvas.height !== window.innerHeight) canvas.height = window.innerHeight;
+        
+        ctx.clearRect(0,0, canvas.width, canvas.height);
+        let cx = canvas.width/2;
+        let cy = canvas.height/2;
+        time += 0.01;
+        
+        // Center Neural Core Glow
+        let radGrad = ctx.createRadialGradient(cx, cy, 20, cx, cy, 250);
+        radGrad.addColorStop(0, 'rgba(0, 80, 200, 0.4)');
+        radGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+        ctx.fillStyle = radGrad;
+        ctx.beginPath(); ctx.arc(cx, cy, 250, 0, Math.PI*2); ctx.fill();
+        
+        // Inter-node connection lines (drawing base network)
+        ctx.lineWidth = 1;
+        
+        memoryNodes.forEach((node, i) => {
+           node.x += (node.targetX - node.x) * 0.03;
+           node.y += (node.targetY - node.y) * 0.03;
+           if(node.alpha > 0.4 && !node.isBg) node.alpha -= 0.0005; 
+           
+           let c = CORES[node.coreIndex];
+           let coreX = cx + c.x + 75;
+           let coreY = cy + c.y + 15;
+
+           // connection line
+           ctx.beginPath();
+           ctx.moveTo(coreX, coreY);
+           ctx.quadraticCurveTo(coreX, node.y, node.x, node.y);
+           ctx.strokeStyle = `rgba(255,255,255, ${0.1 * node.alpha})`;
+           if(!node.isBg) ctx.strokeStyle = node.text.includes('[USER]') ? `rgba(168,85,247, ${0.4 * node.alpha})` : `rgba(0,229,255, ${0.4 * node.alpha})`;
+           ctx.stroke();
+
+           // draw node
+           ctx.shadowBlur = 10;
+           ctx.shadowColor = node.isBg ? '#ffffff' : (node.text.includes('[USER]') ? '#a855f7' : '#00E5FF');
+           ctx.fillStyle = '#fff';
+           ctx.beginPath(); ctx.arc(node.x, node.y, node.isBg ? 1.5 : 3, 0, Math.PI*2); ctx.fill();
+           ctx.shadowBlur = 0;
+
+           // draw text
+           ctx.fillStyle = `rgba(200, 255, 255, ${node.alpha})`;
+           ctx.font = node.isBg ? '8px "Space Grotesk"' : '10px "Inter"';
+           let txt = node.text;
+           if (txt.length > 40) txt = txt.substring(0, 40) + '...';
+           ctx.fillText(txt, node.x + 8, node.y + 3);
+           
+           // pulse stream
+           let pulseRatio = (time + (i*0.1)) % 1;
+           // calc pos along curve (rough approx)
+           let px = coreX + (node.x - coreX) * pulseRatio;
+           let py = coreY + (node.y - coreY) * pulseRatio;
+           
+           ctx.fillStyle = node.isBg ? '#ffffff' : (node.text.includes('[USER]') ? '#a855f7' : '#00E5FF');
+           ctx.shadowBlur = 5; ctx.shadowColor = ctx.fillStyle;
+           ctx.beginPath(); ctx.arc(px, py, 2, 0, Math.PI*2); ctx.fill();
+           ctx.shadowBlur = 0;
+        });
+
+        // Draw CORES
+        CORES.forEach((c) => {
+           let basex = cx + c.x;
+           let basey = cy + c.y;
+           
+           // connections from center to core
+           ctx.beginPath();
+           ctx.moveTo(cx, cy);
+           ctx.lineTo(basex + 75, basey + 15);
+           ctx.strokeStyle = `rgba(255,255,255, 0.15)`;
+           ctx.stroke();
+           
+           // Label Background (floating dark pane)
+           ctx.fillStyle = `rgba(10,12,15,0.7)`;
+           ctx.fillRect(basex, basey, 150, 32);
+           
+           ctx.strokeStyle = c.color;
+           ctx.lineWidth = 1;
+           ctx.strokeRect(basex, basey, 150, 32);
+           
+           ctx.fillStyle = c.color;
+           ctx.fillRect(basex, basey, 4, 32);
+
+           ctx.fillStyle = c.color;
+           ctx.font = 'bold 10px "Space Grotesk"';
+           ctx.fillText(c.label, basex + 10, basey + 14);
+           
+           ctx.fillStyle = '#849396';
+           ctx.font = '8px "Space Grotesk"';
+           ctx.fillText(c.sub, basex + 10, basey + 24);
+        });
+
+        requestAnimationFrame(draw);
+    }
+    draw();
+}
+
+function addMemoryNode(text, sender) {
+    if(!document.getElementById('brainCanvas')) return;
+    let coreIndex = Math.floor(Math.random() * CORES.length);
+    let c = CORES[coreIndex];
+    let angle = Math.random() * Math.PI * 2;
+    let finalDist = 150 + Math.random() * 350;
+    
+    memoryNodes.push({
+        x: window.innerWidth/2,
+        y: window.innerHeight/2,
+        targetX: window.innerWidth/2 + c.x + Math.cos(angle)*finalDist,
+        targetY: window.innerHeight/2 + c.y + Math.sin(angle)*finalDist,
+        text: `[${sender}] ` + text,
+        alpha: 1.0,
+        coreIndex: coreIndex,
+        isBg: false
+    });
+    
+    let fgNodes = memoryNodes.filter(n => !n.isBg);
+    if(fgNodes.length > 40) {
+        let rmIdx = memoryNodes.findIndex(n => !n.isBg);
+        if(rmIdx > -1) memoryNodes.splice(rmIdx, 1);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', initBrain);
+</script>
+</body></html>

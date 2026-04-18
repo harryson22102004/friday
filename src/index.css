@@ -1,0 +1,197 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Outfit:wght@300;500;700&display=swap');
+
+:root {
+  --bg-color: #020617;
+  --accent-color: #06b6d4;
+  --accent-glow: rgba(6, 182, 212, 0.4);
+  --glass-bg: rgba(15, 23, 42, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --text-main: #f8fafc;
+  --text-dim: #94a3b8;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  margin: 0;
+  font-family: 'Outfit', 'Inter', sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  overflow: hidden;
+  height: 100vh;
+  background-image: radial-gradient(circle at 50% 50%, #0f172a 0%, #020617 100%);
+}
+
+.app-container {
+  display: grid;
+  grid-template-columns: 280px 1fr 320px;
+  grid-template-rows: 80px 1fr 100px;
+  height: 100vh;
+  gap: 1rem;
+  padding: 1rem;
+  background: url('/jarvis_background_futuristic_1776544989088.png') no-repeat center center;
+  background-size: cover;
+}
+
+.glass-panel {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
+}
+
+.header {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+}
+
+.logo {
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: 4px;
+  background: linear-gradient(90deg, #fff, var(--accent-color));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 20px var(--accent-glow);
+}
+
+.sidebar {
+  grid-row: 2 / 4;
+}
+
+.main-view {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.stats-panel {
+  grid-row: 2 / 3;
+}
+
+.control-bar {
+  grid-column: 2 / 4;
+  grid-row: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+}
+
+.jarvis-orb {
+  width: 80px;
+  height: 80px;
+  background: radial-gradient(circle, var(--accent-color) 0%, transparent 70%);
+  border-radius: 50%;
+  box-shadow: 0 0 40px var(--accent-glow);
+  animation: pulse 2s infinite ease-in-out;
+  cursor: pointer;
+  border: 2px solid var(--accent-color);
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 0.8; box-shadow: 0 0 20px var(--accent-glow); }
+  50% { transform: scale(1.1); opacity: 1; box-shadow: 0 0 50px var(--accent-glow); }
+  100% { transform: scale(1); opacity: 0.8; box-shadow: 0 0 20px var(--accent-glow); }
+}
+
+.voice-visualizer {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 40px;
+}
+
+.bar {
+  width: 4px;
+  height: 10px;
+  background: var(--accent-color);
+  border-radius: 2px;
+  animation: bounce 1s infinite ease-in-out;
+}
+
+.chat-view, .module-view {
+  flex: 1;
+  padding: 1.5rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.module-view h3 {
+  color: #fff;
+  border-bottom: 1px solid var(--glass-border);
+  padding-bottom: 0.5rem;
+}
+
+.module-view p {
+  color: var(--text-dim);
+  font-size: 1rem;
+}
+
+.chat-bubble {
+  max-width: 80%;
+  padding: 1rem;
+  border-radius: 15px;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.chat-bubble.User {
+  align-self: flex-end;
+  background: rgba(6, 182, 212, 0.2);
+  border: 1px solid rgba(6, 182, 212, 0.3);
+  color: #fff;
+}
+
+.chat-bubble.JARVIS {
+  align-self: flex-start;
+  background: rgba(15, 23, 42, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--accent-color);
+}
+
+.sidebar-header {
+  padding: 1rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: var(--accent-color);
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.core-list, .stats-list {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.core-item {
+  padding: 0.8rem;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.core-item:hover, .core-item.active {
+  background: var(--accent-glow);
+  color: #fff;
+}
+
+.status-indicator {
+  font-size: 0.8rem;
+  color: var(--accent-color);
+  background: rgba(6, 182, 212, 0.1);
+  padding: 0.4rem 1rem;
+  border-radius: 20px;
+  border: 1px solid var(--accent-glow);
+}
